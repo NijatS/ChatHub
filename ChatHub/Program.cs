@@ -1,14 +1,14 @@
-using ChatHub.Context;
-using ChatHub.Hubs;
 using ChatHub.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ChatHub.Context;
+using ChatHub.Hubs;
+using ChatHub.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
 {
@@ -21,7 +21,6 @@ builder.Services.AddDbContext<ChatHubDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 builder.Services.AddSignalR();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,9 +38,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+
 app.MapHub<ChattHub>("/chatHub");
+
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
+
 app.Run();

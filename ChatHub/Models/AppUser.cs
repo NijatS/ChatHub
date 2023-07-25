@@ -4,6 +4,6 @@ namespace ChatHub.Models
 {
     public class AppUser:IdentityUser
     {
-        public string ConnectionId;
+        public string? ConnectionId { get; set; }
     }
 }

@@ -17,41 +17,40 @@ namespace ChatHub.Hubs
 
         public async Task SendMessage(string userId, string message)
         {
-            AppUser appUser = await _userManager.FindByIdAsync(userId);
+            AppUser? appUser = await _userManager.FindByIdAsync(userId);
             if (appUser is not null)
             {
                 string user = _contextAccessor.HttpContext.User.Identity.Name;
-                if(!String.IsNullOrEmpty(appUser.ConnectionId)) {
+                if(!string.IsNullOrWhiteSpace(appUser.ConnectionId)) {
                     await Clients.Client(appUser.ConnectionId).SendAsync("ReceiveMessage",user, message);
                 }
             }
         }
         public async override Task OnConnectedAsync()
         {
-            string connectionId = Context.ConnectionId;
+            string connid = Context.ConnectionId;
             if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 AppUser? appUser = await _userManager.FindByNameAsync(_contextAccessor.HttpContext.User.Identity.Name);
-                if (appUser is not null)
-                {
-                    appUser.ConnectionId = connectionId;
-                    await _userManager.UpdateAsync(appUser);
-                    await Clients.All.SendAsync("Loggin", appUser.Id);
-                }
+
+                appUser.ConnectionId = connid;
+                await _userManager.UpdateAsync(appUser);
+                await Clients.All.SendAsync("Loggin", appUser.Id);
             }
+
             await base.OnConnectedAsync();
         }
+
         public async override Task OnDisconnectedAsync(Exception? exception)
         {
             if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 AppUser? appUser = await _userManager.FindByNameAsync(_contextAccessor.HttpContext.User.Identity.Name);
-                if (appUser is not null)
-                {
-                    appUser.ConnectionId = null;
-                    await _userManager.UpdateAsync(appUser);
-                    await Clients.All.SendAsync("Logout", appUser.Id);
-                }
+
+                appUser.ConnectionId = null;
+
+                await _userManager.UpdateAsync(appUser);
+                await Clients.All.SendAsync("Logout", appUser.Id);
             }
             await base.OnDisconnectedAsync(exception);
         }
