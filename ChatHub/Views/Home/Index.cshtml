@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+@model List<AppUser>
 <div class="container">
     <div class="row p-1">
         <div class="col-1">User</div>
@@ -26,6 +26,21 @@
             <ul id="messagesList"></ul>
         </div>
     </div>
+  <div style="display:flex;justify-content:end"  class="container">
+    <ul>
+       @foreach (var item in Model)
+        {
+            @if (!string.IsNullOrWhiteSpace(item.ConnectionId))
+            {
+                <li class="userchat" style="color:green;cursor:pointer;" id="@item.Id">@item.UserName</li>
+            }
+            else
+            {
+                <li class="userchat" style="color:red;cursor:pointer;" id="@item.Id">@item.UserName</li>
+            }
+        }
+    </ul>
+</div>
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>

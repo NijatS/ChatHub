@@ -1,26 +1,33 @@
 ﻿using ChatHub.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace ChatHub.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(UserManager<AppUser> userManager)
         {
-            _logger = logger;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<AppUser> users = await _userManager.Users.ToListAsync();
+            return View(users);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        //public async Task<IActionResult> CreateUser()
+        //{
+        //    await _userManager.CreateAsync(new AppUser { Email = "Nicat@mail.ru", UserName = "NicatCode" }, "Nicat123@");
+        //    await _userManager.CreateAsync(new AppUser { Email = "Isa@mail.ru", UserName = "JesusCode" }, "Jesus123@");
+        //    await _userManager.CreateAsync(new AppUser { Email = "Sineray@mail.ru", UserName = "SinerayCode" }, "Sineray123@");
+        //    await _userManager.CreateAsync(new AppUser { Email = "Dayday@mail.ru", UserName = "DaydayCode" }, "Dayday123@");
+        //    return Json("Ok");
+        //}
     }
 }
